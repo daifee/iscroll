@@ -275,6 +275,8 @@ IScroll.prototype = {
 			return;
 		}
 
+		this._execEvent('touchEnd');
+
 		if ( this.options.preventDefault && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
 			e.preventDefault();
 		}
@@ -481,6 +483,14 @@ IScroll.prototype = {
 
 	scrollTo: function (x, y, time, easing) {
 		easing = easing || utils.ease.circular;
+
+		if (this.offsetX) {
+			x += this.offsetX;
+		}
+
+		if (this.offsetY) {
+			y += this.offsetY;
+		}
 
 		this.isInTransition = this.options.useTransition && time > 0;
 		var transitionType = this.options.useTransition && easing.style;

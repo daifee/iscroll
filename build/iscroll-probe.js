@@ -278,6 +278,25 @@ var utils = (function () {
 		}
 	};
 
+	me.getRect = function(el) {
+		if (el instanceof SVGElement) {
+			var rect = el.getBoundingClientRect();
+			return {
+				top : rect.top,
+				left : rect.left,
+				width : rect.width,
+				height : rect.height
+			};
+		} else {
+			return {
+				top : el.offsetTop,
+				left : el.offsetLeft,
+				width : el.offsetWidth,
+				height : el.offsetHeight
+			};
+		}
+	};
+
 	return me;
 })();
 function IScroll (el, options) {
@@ -593,6 +612,8 @@ IScroll.prototype = {
 			return;
 		}
 
+		this._execEvent('touchEnd');
+
 		if ( this.options.preventDefault && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
 			e.preventDefault();
 		}
@@ -726,15 +747,16 @@ IScroll.prototype = {
 	},
 
 	refresh: function () {
-		var rf = this.wrapper.offsetHeight;		// Force reflow
+		utils.getRect(this.wrapper);		// Force reflow
 
 		this.wrapperWidth	= this.wrapper.clientWidth;
 		this.wrapperHeight	= this.wrapper.clientHeight;
 
+		var rect = utils.getRect(this.scroller);
 /* REPLACE START: refresh */
 
-		this.scrollerWidth	= this.scroller.offsetWidth;
-		this.scrollerHeight	= this.scroller.offsetHeight;
+		this.scrollerWidth	= rect.width;
+		this.scrollerHeight	= rect.height;
 
 		this.maxScrollX		= this.wrapperWidth - this.scrollerWidth;
 		this.maxScrollY		= this.wrapperHeight - this.scrollerHeight;
@@ -816,6 +838,14 @@ IScroll.prototype = {
 	scrollTo: function (x, y, time, easing) {
 		easing = easing || utils.ease.circular;
 
+		if (this.offsetX) {
+			x += this.offsetX;
+		}
+
+		if (this.offsetY) {
+			y += this.offsetY;
+		}
+
 		this.isInTransition = this.options.useTransition && time > 0;
 		var transitionType = this.options.useTransition && easing.style;
 		if ( !time || transitionType ) {
@@ -842,11 +872,13 @@ IScroll.prototype = {
 		pos.top  -= this.wrapperOffset.top;
 
 		// if offsetX/Y are true we center the element to the screen
+		var elRect = utils.getRect(el);
+		var wrapperRect = utils.getRect(this.wrapper);
 		if ( offsetX === true ) {
-			offsetX = Math.round(el.offsetWidth / 2 - this.wrapper.offsetWidth / 2);
+			offsetX = Math.round(elRect.width / 2 - wrapperRect.width / 2);
 		}
 		if ( offsetY === true ) {
-			offsetY = Math.round(el.offsetHeight / 2 - this.wrapper.offsetHeight / 2);
+			offsetY = Math.round(elRect.height / 2 - wrapperRect.height / 2);
 		}
 
 		pos.left -= offsetX || 0;
@@ -994,6 +1026,7 @@ IScroll.prototype = {
 
 		return { x: x, y: y };
 	},
+
 	_initIndicators: function () {
 		var interactive = this.options.interactiveScrollbars,
 			customStyle = typeof this.options.scrollbars != 'string',
@@ -1227,7 +1260,8 @@ IScroll.prototype = {
 				x = 0, y,
 				stepX = this.options.snapStepX || this.wrapperWidth,
 				stepY = this.options.snapStepY || this.wrapperHeight,
-				el;
+				el,
+				rect;
 
 			this.pages = [];
 
@@ -1267,7 +1301,8 @@ IScroll.prototype = {
 				n = -1;
 
 				for ( ; i < l; i++ ) {
-					if ( i === 0 || el[i].offsetLeft <= el[i-1].offsetLeft ) {
+					rect = utils.getRect(el[i]);
+					if ( i === 0 || rect.left <= utils.getRect(el[i-1]).left ) {
 						m = 0;
 						n++;
 					}
@@ -1276,16 +1311,16 @@ IScroll.prototype = {
 						this.pages[m] = [];
 					}
 
-					x = Math.max(-el[i].offsetLeft, this.maxScrollX);
-					y = Math.max(-el[i].offsetTop, this.maxScrollY);
-					cx = x - Math.round(el[i].offsetWidth / 2);
-					cy = y - Math.round(el[i].offsetHeight / 2);
+					x = Math.max(-rect.left, this.maxScrollX);
+					y = Math.max(-rect.top, this.maxScrollY);
+					cx = x - Math.round(rect.width / 2);
+					cy = y - Math.round(rect.height / 2);
 
 					this.pages[m][n] = {
 						x: x,
 						y: y,
-						width: el[i].offsetWidth,
-						height: el[i].offsetHeight,
+						width: rect.width,
+						height: rect.height,
 						cx: cx,
 						cy: cy
 					};
@@ -1989,7 +2024,7 @@ Indicator.prototype = {
 			}
 		}
 
-		var r = this.wrapper.offsetHeight;	// force refresh
+		utils.getRect(this.wrapper);	// force refresh
 
 		if ( this.options.listenX ) {
 			this.wrapperWidth = this.wrapper.clientWidth;

@@ -1,3 +1,10 @@
+> For pull refresh:
+
+> * add custom events `touchEnd`
+> * add attribute `offsetX/Y`
+> * package.main = build/iscroll-probe.js
+
+
 <h1 id="intro">iScroll, smooth scrolling for the web</h1>
 
 iScroll is a high performance, small footprint, dependency free, multi-platform javascript scroller.
@@ -281,13 +288,13 @@ Default: `0`
 
 Set this to `true` to let iScroll emit a custom `tap` event when the scroll area is clicked/tapped but not scrolled.
 
-This is the suggested way to handle user interaction with clickable elements. To listen to the tap event you would add an event listener as you would do for a standard event. Example: 
+This is the suggested way to handle user interaction with clickable elements. To listen to the tap event you would add an event listener as you would do for a standard event. Example:
 
 ```js
 element.addEventListener('tap', doSomething, false); \\ Native
 $('#element').on('tap', doSomething); \\ jQuery
 ```
-    
+
 You can also customize the event name by passing a string. Eg:
 
 ```js
@@ -488,7 +495,7 @@ Same as above but X and Y are relative to the current position.
 ```js
 myScroll.scrollBy(0, -10);
 ```
-    
+
 Would scroll 10 pixels down. If you are at -100, you'll end up at -110.
 
 ### scrollToElement(el, time, offsetX, offsetY, easing)
@@ -705,7 +712,7 @@ ajax('page.php', onCompletion);
 
 function onCompletion () {
     // Update here your DOM
-    
+
     setTimeout(function () {
         myScroll.refresh();
     }, 0);

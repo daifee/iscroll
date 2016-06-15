@@ -1,5 +1,5 @@
 {
-  "name": "iscroll",
+  "name": "xiscroll",
   "description": "Smooth scrolling for the web",
   "version": "5.2.0",
   "homepage": "http://iscrolljs.com",
@@ -13,17 +13,17 @@
     "mobile",
     "desktop"
   ],
-  "main": "build/iscroll.js",
+  "main": "build/iscroll-probe.js",
   "devDependencies": {
     "jshint": "~2.9.1",
     "uglify-js": "~2.6.2"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cubiq/iscroll.git"
+    "url": "https://github.com/daifee/xiscroll.git"
   },
   "bugs": {
-    "url": "https://github.com/cubiq/iscroll/issues"
+    "url": "https://github.com/daifee/xiscroll/issues"
   },
   "license": "MIT"
 }

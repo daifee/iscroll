@@ -687,6 +687,9 @@ IScroll.prototype = {
 		}
 
 // INSERT POINT: _end
+		if (this.hookNewY) {
+			newY = this.hookNewY(newY);
+		}
 
 		if ( newX != this.x || newY != this.y ) {
 			// change easing function when scroller goes out of the boundaries

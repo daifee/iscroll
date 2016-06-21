@@ -336,7 +336,9 @@ IScroll.prototype = {
 		if (this.hookNewY) {
 			newY = this.hookNewY(newY);
 			// 移动一段距离后，300ms 再松手，time=0，无法触发 scrollEnd 事件
-			time <= 0 && (time = 10);
+			if (time <= 0) {
+				time = 10;
+			}
 		}
 
 		if ( newX != this.x || newY != this.y ) {

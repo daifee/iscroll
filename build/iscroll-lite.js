@@ -1,4 +1,4 @@
-/*! iScroll v5.2.0 ~ (c) 2008-2016 Matteo Spinelli ~ http://cubiq.org/license */
+/*! iScroll v5.2.2 ~ (c) 2008-2016 Matteo Spinelli ~ http://cubiq.org/license */
 (function (window, document, Math) {
 var rAF = window.requestAnimationFrame	||
 	window.webkitRequestAnimationFrame	||
@@ -384,7 +384,7 @@ function IScroll (el, options) {
 }
 
 IScroll.prototype = {
-	version: '5.2.0',
+	version: '5.2.2',
 
 	_init: function () {
 		this._initEvents();
@@ -635,6 +635,10 @@ IScroll.prototype = {
 // INSERT POINT: _end
 		if (this.hookNewY) {
 			newY = this.hookNewY(newY);
+			// 移动一段距离后，300ms 再松手，time=0，无法触发 scrollEnd 事件
+			if (time <= 0) {
+				time = 10;
+			}
 		}
 
 		if ( newX != this.x || newY != this.y ) {
